@@ -32,7 +32,6 @@ OBDIISettings gSettings;
 BTClassicManager *gBTManager;
 OBDIIWebServer *gServer;
 
-bool gBTCScanRequested;
 bool gWiFiOn;
 
 long gDiscoveryRequestStartTime;
@@ -54,7 +53,7 @@ void setup() {
   Serial.println(myIP);
 
   // Start Web Server
-  gServer = new OBDIIWebServer(gBTManager, 80);
+  gServer = new OBDIIWebServer(gBTManager, &gContext, 80);
   gServer->begin();
   Serial.println("Server started");
 
@@ -64,7 +63,7 @@ void setup() {
   // Init Bluetooth Classic
   gBTManager = new BTClassicManager();
 
-  gBTCScanRequested = true;
+  gContext.bScanRequested = true;
   gDiscoveryRequestStartTime = 0;
   gDiscoveryStartTime = 0;
 }
@@ -79,7 +78,7 @@ void loop() {
   long time_delta = now - task_start_ms;
 
   // Scan for BT devices
-  if (true == gBTCScanRequested) {
+  if (true == gContext.bScanRequested) {
     if (false == discovering) {
       // Stop WiFi
       if (true == gWiFiOn) {
@@ -90,7 +89,7 @@ void loop() {
       
       task_start_ms = now;
       gBTManager->StartDiscovery();
-      gBTCScanRequested = false;
+      gContext.bScanRequested = false;
       discovering = true;
       time_delta = now - task_start_ms;
     }

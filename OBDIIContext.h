@@ -6,7 +6,7 @@
 #define OBDIICONTEXT_H
 
 struct OBDIIContext {
-  bool bScanRequested;  
+  bool bScanRequested = false;  
 };
 
 #endif

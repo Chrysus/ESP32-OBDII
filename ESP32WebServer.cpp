@@ -13,10 +13,11 @@
  *  
  */
 
-OBDIIWebServer::OBDIIWebServer(BTClassicManager *btManager,  int port) 
+OBDIIWebServer::OBDIIWebServer(BTClassicManager *btManager, OBDIIContext *context, int port) 
 : WebServer(port)
 {
   this->BTManager = btManager;
+  this->context = context;
   
   this->on("/", std::bind(&OBDIIWebServer::HandleRoot, this));
   this->on("/scan", std::bind(&OBDIIWebServer::HandleScan, this));
@@ -31,22 +32,6 @@ OBDIIWebServer::OBDIIWebServer(BTClassicManager *btManager,  int port)
 OBDIIWebServer::~OBDIIWebServer() {
   
 }
-
-void OBDIIWebServer::Init() {
-  this->on("/", std::bind(&OBDIIWebServer::HandleRoot, this));
-  this->on("/scan", std::bind(&OBDIIWebServer::HandleScan, this));
-  this->on("/devices", std::bind(&OBDIIWebServer::HandleDevices, this));
-  this->on("/pair", std::bind(&OBDIIWebServer::HandlePair, this));
-  this->on("/unpair", std::bind(&OBDIIWebServer::HandleUnpair, this));
-  this->on("/settings", std::bind(&OBDIIWebServer::HandleSettings, this));
-
-  this->onNotFound(std::bind(&OBDIIWebServer::HandleNotFound, this));
-}
-
-void OBDIIWebServer::SetBTManager(BTClassicManager *btManager) {
-  this->BTManager = btManager;
-}
-
 
 void OBDIIWebServer::HandleRoot() {
   BTClassicDeviceLinkedList *device_list = NULL;
@@ -111,7 +96,8 @@ void OBDIIWebServer::HandleNotFound() {
 }
 
 void OBDIIWebServer::HandleScan() {
-  this->send(200, "text/plain", "SCAN PAGE PLACEHODER!");
+  this->context->bScanRequested = true;
+  this->send(200, "text/plain", "SCAN REQUESTED!");
 }
 
 void OBDIIWebServer::HandleDevices() {

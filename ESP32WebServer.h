@@ -6,12 +6,8 @@ class BTClassicManager;
 
 class OBDIIWebServer : public WebServer {
   public:
-  OBDIIWebServer(BTClassicManager *btManager, int port = 80);
+  OBDIIWebServer(BTClassicManager *btManager, OBDIIContext *context, int port = 80);
   ~OBDIIWebServer();
-
-  // HACK
-  void Init();
-  void SetBTManager(BTClassicManager *btManager);
 
   private:
   BTClassicManager *BTManager;
