@@ -8,6 +8,9 @@
 #include "BTClassicManager.h"
 #include "BTClassicDeviceLinkedList.h"
 
+#include "OBDIIWebPageScan.h"
+#include "OBDIIWebPageDevices.h"
+
 /* 
  *  WEB SERVER
  *  
@@ -97,11 +100,24 @@ void OBDIIWebServer::HandleNotFound() {
 
 void OBDIIWebServer::HandleScan() {
   this->context->bScanRequested = true;
-  this->send(200, "text/plain", "SCAN REQUESTED!");
+
+  String *message = OBDIIWebPageScanString();
+  this->send(200, "text/plain", *message);
+  
+  delete(message);
 }
 
 void OBDIIWebServer::HandleDevices() {
-  this->send(200, "text/plain", "DEVICE PAGE PLACEHODER!");
+  BTClassicDeviceLinkedList *device_list = NULL;
+
+  if (this->BTManager != NULL) {
+    device_list = this->BTManager->GetDeviceList();
+  }
+
+  String *message = OBDIIWebPageDevicesString(device_list);
+  this->send(200, "text/html", *message);
+
+  delete(message);
 }
 
 void OBDIIWebServer::HandlePair() {

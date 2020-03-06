@@ -90,3 +90,19 @@ bool get_name_from_eir(uint8_t *eir, char *bdname, uint8_t *bdname_len) {
     }
     return false;
 }
+
+String* mac_address_string(const uint8_t *mac_address) {
+  String *mac_string = new String();
+  char element[2];
+  
+  for (int i = 0; i < 5; i++) {
+    sprintf(element, "%02x:", mac_address[i]);
+    *mac_string += element;
+    *mac_string += ':';
+  }
+  
+  sprintf(element, "%02x:", mac_address[5]);
+  *mac_string += element;
+
+  return mac_string;
+}
