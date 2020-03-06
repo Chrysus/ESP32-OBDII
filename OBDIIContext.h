@@ -6,7 +6,9 @@
 #define OBDIICONTEXT_H
 
 struct OBDIIContext {
-  bool bScanRequested = false;  
+  bool bScanRequested = false;
+
+  long discoveryDuration = 1000 * 10;
 };
 
 #endif
