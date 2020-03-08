@@ -99,12 +99,31 @@ void OBDIIWebServer::HandleNotFound() {
 }
 
 void OBDIIWebServer::HandleScan() {
-  this->context->bScanRequested = true;
+  HTTPMethod http_method = this->method();
+  String *message = NULL;
 
-  String *message = OBDIIWebPageScanString();
-  this->send(200, "text/plain", *message);
-  
-  delete(message);
+  if (HTTP_GET == http_method) {
+    message = OBDIIWebPageScanString();
+  }
+
+  if (HTTP_POST == http_method) {
+    this->context->bScanRequested = true;
+
+    if (this->hasArg("scan_time")) {
+      String scan_time_string = this->arg("scan_time");
+      long scan_time = scan_time_string.toInt();
+      this->context->discoveryDuration = scan_time;
+    }
+    
+    message = OBDIIWebPageScanString();
+  }
+
+  if (NULL != message) {
+    this->send(200, "text/html", *message);
+    delete(message);
+  } else {
+    this->send(200, "text/plain", "ERROR: WebServer Page Error\n");
+  }
 }
 
 void OBDIIWebServer::HandleDevices() {
@@ -121,13 +140,13 @@ void OBDIIWebServer::HandleDevices() {
 }
 
 void OBDIIWebServer::HandlePair() {
-  this->send(200, "text/plain", "PAIR PAGE PLACEHODER!");
+  this->send(200, "text/html", "PAIR PAGE PLACEHODER!");
 }
 
 void OBDIIWebServer::HandleUnpair() {
-  this->send(200, "text/plain", "UNPAIR PAGE PLACEHODER!");
+  this->send(200, "text/html", "UNPAIR PAGE PLACEHODER!");
 }
 
 void OBDIIWebServer::HandleSettings() {
-  this->send(200, "text/plain", "SETTINGS PAGE PLACEHODER!");
+  this->send(200, "text/html", "SETTINGS PAGE PLACEHODER!");
 }
